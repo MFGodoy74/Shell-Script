@@ -1,0 +1,144 @@
+#!/bin/bash
+
+MYSQL_USER="-uroot"
+MYSQL=/usr/bin/mysql
+MYSQL_PASSWORD="-pemporium"
+HEIGHT=35
+WIDTH=60
+CHOICE_HEIGHT=20
+BACKTITLE="Gerenciador de Banco Emporium"
+TITLE="Menu de Opções"
+MENU="Opções:"
+SQL="source /tmp/BACKUP_BD/backup_banco.sql"
+
+
+OPTIONS=(1 "Backup de banco Emporium completo"
+         2 "Restaurar banco emporium"
+         3 "Dump Plu"
+         4 "Recuplerar Dados Familia PLU"
+
+         
+        )
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+
+        1)
+          if [ ! -e "/tmp/BACKUP_DB" ]
+	      then
+            echo " o diretorio não existe vamos criar o diretorio"
+             mkdir /tmp/BACKUP_DB
+          fi  
+	   
+	    echo "Iniciando Backup banco Emporium..."
+	    mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium   >/tmp/BACKUP_DB/backup_banco.sql
+            echo "Backup Completo!"
+	    ./MENU_PROF.sh
+
+            ;;
+        2)
+          if [ ! -e "/tmp/BACKUP_DB" ]
+	       then
+            echo " o diretorio não existe vamos criar o diretorio"
+             mkdir /tmp/BACKUP_DB
+          fi  
+           
+             echo "Iniciando restauração..."   
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/backup_banco.sql
+	     echo "Restauração Completa!"
+            ;;
+        3)
+          if [ ! -e "/tmp/BACKUP_DB" ]
+	       then
+            echo " o diretorio não existe vamos criar o diretorio"
+             mkdir /tmp/BACKUP_DB
+          fi  
+
+            echo  "Iniciando backup familia PLU..." 
+ 
+             echo " - plan_store_plu"        
+             echo " - plu"                   
+             echo " - plu_attributes"        
+             echo " - plu_batch_stock"       
+             echo " - plu_extra"             
+             echo " - plu_images"            
+             echo " - plu_pack"              
+             echo " - plu_screen"            
+             echo " - plu_store"             
+             echo " - plu_store_label"       
+             echo " - plan_plu_split_amount" 
+             echo " - plu_store_service"     
+             echo " - plu_type"              
+             echo " - plu_warnings"          
+             echo " - salesforce_control_plu"
+             echo " - sku_store_plu"
+             
+                                             
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plan_store_plu         >/tmp/BACKUP_DB/plan_store_plu.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu                    >/tmp/BACKUP_DB/plu.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_attributes         >/tmp/BACKUP_DB/plu_attributes.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_batch_stock        >/tmp/BACKUP_DB/plu_batch_stock.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_extra              >/tmp/BACKUP_DB/plu_extra.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_images             >/tmp/BACKUP_DB/plu_images.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_pack               >/tmp/BACKUP_DB/plu_pack.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_screen             >/tmp/BACKUP_DB/plu_screen.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_store              >/tmp/BACKUP_DB/plu_store.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_store_label        >/tmp/BACKUP_DB/plu_store_label.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plan_plu_split_amount  >/tmp/BACKUP_DB/plan_plu_split_amount.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_store_service      >/tmp/BACKUP_DB/plu_store_service.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_type               >/tmp/BACKUP_DB/plu_type.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium plu_warnings           >/tmp/BACKUP_DB/plu_warnings.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium salesforce_control_plu >/tmp/BACKUP_DB/salesforce_control_plu.sql
+             mysqldump $MYSQL_USER $MYSQL_PASSWORD emporium sku_store_plu          >/tmp/BACKUP_DB/sku_store_plu.sql    
+            echo "Backup familia PLU realizado com sucesso!"
+            ./MENU_PROF.sh
+            ;;
+        4)
+             echo "Restaurando dados de tabelas falimia PLU"
+             echo " - plan_store_plu"
+             echo " - plu"
+             echo " - plu_attributes"
+             echo " - plu_batch_stock"
+             echo " - plu_extra"
+             echo " - plu_images"
+             echo " - plu_pack"
+             echo " - plu_screen"
+             echo " - plu_store"
+             echo " - plu_store_label"
+             echo " - plan_plu_split_amount"
+             echo " - plu_store_service"
+             echo " - plu_type"
+             echo " - plu_warnings"
+             echo " - salesforce_control_plu"
+             echo " - sku_store_plu"
+                
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plan_plu_split_amount.sql;
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plan_store_plu.sql;
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu.sql;       
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_attributes.sql;        
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_batch_stock.sql;       
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_extra.sql;             
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_images.sql;            
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_pack.sql;              
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_screen.sql;            
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_store.sql;             
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_store_label.sql;       
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_store_service.sql;     
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_type.sql;              
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/plu_warnings.sql;          
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/salesforce_control_plu.sql;
+             mysql  $MYSQL_USER $MYSQL_PASSWORD emporium < /tmp/BACKUP_DB/sku_store_plu.sql; 
+
+             echo "Restauração familia PLU realizada com sucesso!"
+             ./MENU_PROF.sh         
+            ;;    
+esac
+
